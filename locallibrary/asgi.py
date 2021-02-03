@@ -1,3 +1,7 @@
+"""
+Módulo responsável por carregar a aplicação junto
+com as configurações padrões
+"""
 import os
 
 from django.core.asgi import get_asgi_application
