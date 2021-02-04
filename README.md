@@ -55,7 +55,15 @@ ___
     ```shell
     py manage.py load_defaults
     ```
-  
+* Crie seu usuário utilizando
+  - Linux:
+    ```shell
+    python3 manage.py createsuperuser
+    ```
+  - Windows:
+    ```shell
+    py manage.py createsuperuser
+    ```
 * Para realizar os testes basta utilizar o seguinte comando:
   - Linux:
     ```shell
@@ -75,17 +83,25 @@ ___
     ```shell
     curl -X POST -d "username=username&password=password" http://localhost:8000/login/
     ```
+  * Para receber um novo token JWT utilizando um token expirado basta usar:
+    ```shell
+    curl -X POST -H "Content-Type: application/json" -d '{"token":"<JWT Expirado>"}' http://localhost:8000/refresh-tokenrefresh-token/
+    ```
+  * Para criar um novo usário basta:
+    ```shell
+    curl -H "Authorization: JWT <JWT>" -d "username=<nome_do_usuario_novo>&password=<senha_do_usuario_novo>&email=<email_do_usuario_novo>" http://localhost:8000/account/register
+    ```
   * Para adicionar um novo CPF a lista de bloqueados:
     ```shell
-     curl -H "Authorization: JWT <JWT>" -d "username=username&password=password" http://localhost:8000/catalog/addcpf/<cpf>/
+    curl -H "Authorization: JWT <JWT>" -d "username=username&password=password" http://localhost:8000/catalog/addcpf/<cpf>/
     ```
   * Para deletar um CPF da lista de bloqueados:
     ```shell
-     curl -H "Authorization: JWT <JWT>" -d "username=username&password=password" http://localhost:8000/catalog/deletecpf/<cpf>/
+    curl -H "Authorization: JWT <JWT>" -d "username=username&password=password" http://localhost:8000/catalog/deletecpf/<cpf>/
     ```
   * Para receber um Json {"cpf", ['cpf_1', 'cpf_2',...]} que é a lista de CPFs cadastrados no banco de dados:
     ```shell
-     curl -H "Authorization: JWT <JWT>" -d "username=username&password=password" http://localhost:8000/catalog/getcpfs/
+    curl -H "Authorization: JWT <JWT>" -d "username=username&password=password" http://localhost:8000/catalog/getcpfs/
     ```
 # Outros
  * O código foi formatado usando o Pylint.
