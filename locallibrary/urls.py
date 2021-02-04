@@ -1,4 +1,5 @@
-"""locallibrary URL Configuration
+"""
+locallibrary URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
@@ -23,6 +24,7 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('catalog/', include('catalog.urls')),
-    path('login/', obtain_jwt_token),
-    path('refresh-token/', refresh_jwt_token),
+    path('login/', obtain_jwt_token, name='get_token'),
+    path('refresh-token/', refresh_jwt_token, name='refresh_token'),
+    path('account/', include('account.urls')),
 ]

@@ -7,12 +7,11 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.decorators import renderer_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.response import Response
-from rest_framework.utils import json
 
 from catalog.models import CPFModel
 from catalog.serializers import CPFSerializer
@@ -43,15 +42,15 @@ def get_cpfs(request):
 @api_view(["POST"])
 @csrf_exempt
 @permission_classes([IsAuthenticated])
-def add_cpf(request):
+def add_cpf(request, cpf_id):
     """
     Recebe um CPF em formato json insere no banco de dados
+    :param cpf_id: CPF em string
     :param request: Requerente da função
     :return: Resposta da inserção
     """
-    payload = json.loads(request.body)
     try:
-        cpf = CPFModel.objects.create(cpf=payload["cpf"])
+        cpf = CPFModel.objects.create(cpf=cpf_id)
         serializer = CPFSerializer(cpf)
         return JsonResponse({'cpf': serializer.data},
                             safe=False,
@@ -60,39 +59,7 @@ def add_cpf(request):
     except ObjectDoesNotExist as object_exception:
         return JsonResponse({'erro': str(object_exception)},
                             safe=False,
-                            status=status.HTTP_404_NOT_FOUND)
-
-    except ConnectionError:
-        return JsonResponse({'erro': 'Algo deu errado.'},
-                            safe=False,
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(["PUT"])
-@csrf_exempt
-@permission_classes([IsAuthenticated])
-def change_cpf(request, cpf_id):
-    """
-    Altera o valor de um CPF já existente utilizando
-    json
-    :param request: Requerente da função
-    :param cpf_id: CPF string
-    :return: Resposta da edição
-    """
-    payload = json.loads(request.body)
-    try:
-        cpf_data = CPFModel.objects.filter(cpf=cpf_id)
-        cpf_data.update(**payload)
-        cpf_object = CPFModel.objects.get(cpf=cpf_id)
-        serializer = CPFSerializer(cpf_object)
-        return JsonResponse({'cpf': serializer.data},
-                            safe=False,
-                            status=status.HTTP_200_OK)
-
-    except ObjectDoesNotExist as object_exception:
-        return JsonResponse({'erro': str(object_exception)},
-                            safe=False,
-                            status=status.HTTP_404_NOT_FOUND)
+                            status=status.HTTP_204_NO_CONTENT)
 
     except ConnectionError:
         return JsonResponse({'erro': 'Algo deu errado.'},
@@ -113,12 +80,12 @@ def delete_cpf(request, cpf_id):
     try:
         cpf_object = CPFModel.objects.get(cpf=cpf_id)
         cpf_object.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_200_OK)
 
     except ObjectDoesNotExist as object_exception:
         return JsonResponse({'erro': str(object_exception)},
                             safe=False,
-                            status=status.HTTP_404_NOT_FOUND)
+                            status=status.HTTP_204_NO_CONTENT)
 
     except ConnectionError:
         return JsonResponse({'erro': 'Algo deu errado.'},
@@ -141,16 +108,16 @@ def check_cpf(request, cpf_id):
     try:
         cpf_object = CPFModel.objects.get(cpf=cpf_id)
         serializer = CPFSerializer(cpf_object)
-        return Response({'cpf': serializer.data},
+        return Response({'result': 'DENY'},
                         template_name='deny.html',
                         status=status.HTTP_200_OK)
 
     except ObjectDoesNotExist:
-        return Response({'cpf': 'não existe'},
+        return Response({'result': 'ALLOW'},
                         template_name='allow.html',
                         status=status.HTTP_200_OK)
 
     except ConnectionError:
         return JsonResponse({'erro': 'Algo deu errado.'},
-                        safe=False,
-                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                            safe=False,
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)

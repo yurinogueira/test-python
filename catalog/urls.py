@@ -8,11 +8,9 @@ from catalog import views
 router = routers.DefaultRouter()
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('getcpfs/', cache_page(60)(views.get_cpfs)),
-    path('addcpf/', views.add_cpf),
-    path('changecpf/<str:cpf_id>/', views.change_cpf),
-    path('deletecpf/<str:cpf_id>/', views.delete_cpf),
-    path('checkcpf/<str:cpf_id>/', cache_page(30)(views.check_cpf)),
+    path('', include(router.urls), name='base'),
+    path('getcpfs/', cache_page(60)(views.get_cpfs), name='getcpfs'),
+    path('addcpf/<str:cpf_id>/', views.add_cpf, name='addcpf'),
+    path('deletecpf/<str:cpf_id>/', views.delete_cpf, name='deletecpf'),
+    path('checkcpf/<str:cpf_id>/', cache_page(30)(views.check_cpf), name='checkcpf'),
 ]
