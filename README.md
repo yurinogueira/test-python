@@ -85,7 +85,7 @@ ___
     ```
   * Para receber um novo token JWT utilizando um token expirado basta usar:
     ```shell
-    curl -X POST -H "Content-Type: application/json" -d '{"token":"<JWT Expirado>"}' http://localhost:8000/refresh-tokenrefresh-token/
+    curl -X POST -H "Content-Type: application/json" -d '{"token":"<JWT Expirado>"}' http://localhost:8000/refresh-token/
     ```
   * Para criar um novo usário basta:
     ```shell
